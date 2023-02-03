@@ -7,7 +7,10 @@ from api.models import Genre, Movie
 
 
 class ViewsTests(TestCase):
-    def setUp(self) -> None:
+    multi_db = True
+
+    @classmethod
+    def setUpClass(cls) -> None:
         Genre.objects.create(title="GenreTest")
         Genre.objects.create(title="TestName")
         Movie.objects.create(
@@ -27,6 +30,11 @@ class ViewsTests(TestCase):
             imdb_rating=Decimal("7.5"),
             duration=15,
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        Genre.objects.all().delete()
+        Movie.objects.all().delete()
 
     def test_genre_list(self):
         check_data = [
@@ -119,7 +127,7 @@ class ViewsTests(TestCase):
         self.assertJSONEqual(response.content, {"error": ["page__invalid"]})
 
     def test_correct_filtering_by_src(self):
-        response = self.client.get(reverse("api:movies_list"), {"src": "tests"})
+        response = self.client.get(reverse("api:movies_list"), {"src": "test"})
 
         check_data = {
             "pages": 1,
