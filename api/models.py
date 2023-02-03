@@ -1,4 +1,3 @@
-from enum import Enum
 import os
 import uuid as uuid
 from django.db import models
@@ -15,18 +14,16 @@ class Genre(models.Model):
 
 
 class Person(models.Model):
-    class PersonStatus(Enum):
+    class PersonStatus(models.TextChoices):
         DIRECTOR = "director"
         WRITER = "writer"
         ACTOR = "actor"
-
-    PERSON_STATUS_CHOICES = [(tag, tag.value) for tag in PersonStatus]
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    types = models.CharField(choices=PERSON_STATUS_CHOICES, max_length=50)
+    types = models.CharField(choices=PersonStatus.choices, max_length=50)
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name} ({self.types})"
@@ -47,14 +44,12 @@ def bg_picture_file_path(instance, filename):
 
 
 class Movie(models.Model):
-    class MPARating(Enum):
+    class MPARating(models.TextChoices):
         G = "G"
         PG = "PG"
         PG_13 = "PG-13"
         R = "R"
         NC_17 = "NC-17"
-
-    MPA_RATING_CHOICES = [(tag, tag.value) for tag in MPARating]
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -63,7 +58,7 @@ class Movie(models.Model):
     poster = models.ImageField(null=True, upload_to=poster_file_path)
     bg_picture = models.ImageField(null=True, upload_to=bg_picture_file_path)
     release_year = models.IntegerField()
-    mpa_rating = models.CharField(choices=MPA_RATING_CHOICES, max_length=50)
+    mpa_rating = models.CharField(choices=MPARating.choices, max_length=50)
     imdb_rating = models.DecimalField(max_digits=3, decimal_places=2)
     duration = models.IntegerField()
     genres = models.ManyToManyField(Genre, related_name="movies")
