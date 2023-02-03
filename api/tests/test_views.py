@@ -114,12 +114,12 @@ class ViewsTests(TestCase):
         self.assertJSONEqual(response.content, {"error": ["page__out_of_bounds"]})
 
     def test_invalid_page(self):
-        response = self.client.get(reverse("api:movies_list"), {"page": "test"})
+        response = self.client.get(reverse("api:movies_list"), {"page": "tests"})
 
         self.assertJSONEqual(response.content, {"error": ["page__invalid"]})
 
     def test_correct_filtering_by_src(self):
-        response = self.client.get(reverse("api:movies_list"), {"src": "test"})
+        response = self.client.get(reverse("api:movies_list"), {"src": "tests"})
 
         check_data = {
             "pages": 1,
@@ -205,7 +205,7 @@ class ViewsTests(TestCase):
         self.assertJSONEqual(response.content, {"error": ["genre__invalid"]})
 
     def test_filter_when_genre_id_str(self):
-        response = self.client.get(reverse("api:movies_list"), {"genre_id": "test,2"})
+        response = self.client.get(reverse("api:movies_list"), {"genre_id": "tests,2"})
 
         self.assertJSONEqual(response.content, {"error": ["genre__invalid"]})
 
