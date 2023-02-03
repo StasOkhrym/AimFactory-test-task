@@ -3,10 +3,12 @@ from django.core import serializers
 from django.db import DatabaseError
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import JsonResponse, HttpRequest
+from django.views.decorators.csrf import csrf_exempt
 
 from api.models import Genre, Movie
 
 
+@csrf_exempt
 def genres_list(request: HttpRequest) -> JsonResponse:
     try:
         genres = Genre.objects.all()
@@ -16,6 +18,7 @@ def genres_list(request: HttpRequest) -> JsonResponse:
         return JsonResponse({"error": ["internal"]})
 
 
+@csrf_exempt
 def movies_list(request) -> JsonResponse:
     genre_id = request.GET.get("genre_id", None)
     search_phrase = request.GET.get("genre_id", None)
@@ -57,6 +60,7 @@ def movies_list(request) -> JsonResponse:
         return JsonResponse({"error": ["internal"]})
 
 
+@csrf_exempt
 def retrieve_one_genre_id(genre_ids: str) -> int | None:
     list_of_ids = genre_ids.split(",")
     genre_id = list_of_ids[0]
