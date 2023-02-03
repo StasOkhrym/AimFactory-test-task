@@ -2,25 +2,33 @@ import os
 import uuid as uuid
 from django.db import models
 from django.utils.text import slugify
+from django.utils import timezone
 
 
-class Genre(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+class BaseModel(models.Model):
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_at = timezone.now()
+        self.updated_at = timezone.now()
+        return super().save(*args, **kwargs)
+
+
+class Genre(BaseModel):
     title = models.CharField(max_length=50)
 
     def __str__(self) -> str:
         return self.title
 
 
-class Person(models.Model):
+class Person(BaseModel):
     class PersonStatus(models.TextChoices):
         DIRECTOR = "director"
         WRITER = "writer"
         ACTOR = "actor"
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     types = models.CharField(choices=PersonStatus.choices, max_length=50)
@@ -43,7 +51,7 @@ def bg_picture_file_path(instance, filename):
     return os.path.join("uploads/movies/bg_pictures/", filename)
 
 
-class Movie(models.Model):
+class Movie(BaseModel):
     class MPARating(models.TextChoices):
         G = "G"
         PG = "PG"
@@ -51,8 +59,6 @@ class Movie(models.Model):
         R = "R"
         NC_17 = "NC-17"
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=5000)
     poster = models.ImageField(null=True, upload_to=poster_file_path)
@@ -77,7 +83,7 @@ class Movie(models.Model):
                     self.writers.add(person)
                 if status == Person.PersonStatus.ACTOR.value:
                     self.stars.add(person)
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.title
