@@ -61,7 +61,7 @@ def retrieve_one_genre_id(genre_ids: str) -> int | None:
     return genre_id
 
 
-def genres_list(request: HttpRequest) -> JsonResponse:
+def genre_list_view(request: HttpRequest) -> JsonResponse:
     try:
         genres = Genre.objects.all()
         data = get_genres_dicts(genres)
@@ -70,7 +70,7 @@ def genres_list(request: HttpRequest) -> JsonResponse:
         return JsonResponse({"error": ["internal"]})
 
 
-def movies_list(request: HttpRequest) -> JsonResponse:
+def movie_list_view(request: HttpRequest) -> JsonResponse:
     genre_id = request.GET.get("genre_id", None)
     search_phrase = request.GET.get("src", None)
     page = request.GET.get("page", 1)
@@ -112,7 +112,7 @@ def movies_list(request: HttpRequest) -> JsonResponse:
         return JsonResponse({"error": ["internal"]})
 
 
-def movie_by_id(request: HttpRequest, pk: int) -> JsonResponse:
+def movie_detail_view(request: HttpRequest, pk: int) -> JsonResponse:
     try:
         movie = Movie.objects.get(id=pk)
     except Movie.DoesNotExist:
