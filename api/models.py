@@ -58,7 +58,9 @@ class Movie(TimeStampModel):
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=5000)
     poster = models.ImageField(null=True, blank=True, upload_to=poster_file_path)
-    bg_picture = models.ImageField(null=True, blank=True, upload_to=bg_picture_file_path)
+    bg_picture = models.ImageField(
+        null=True, blank=True, upload_to=bg_picture_file_path
+    )
     release_year = models.IntegerField()
     mpa_rating = models.CharField(choices=MPARating.choices, max_length=50)
     imdb_rating = models.DecimalField(max_digits=3, decimal_places=2)
