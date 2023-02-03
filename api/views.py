@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core import serializers
+from django.db import DatabaseError
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import JsonResponse, HttpRequest
 
@@ -11,7 +12,7 @@ def genres_list(request: HttpRequest) -> JsonResponse:
         genres = Genre.objects.all()
         data = serializers.serialize("json", genres)
         return JsonResponse(data, safe=False)
-    except Exception:
+    except DatabaseError:
         return JsonResponse({"error": ["internal"]})
 
 
@@ -52,7 +53,7 @@ def movies_list(request) -> JsonResponse:
 
         return JsonResponse({"pages": page, "total": total, "results": results}, safe=False)
 
-    except Exception:
+    except DatabaseError:
         return JsonResponse({"error": ["internal"]})
 
 
@@ -76,6 +77,8 @@ def movie_by_id(request, movie_id) -> JsonResponse:
         movie = Movie.objects.get(id=movie_id)
     except Movie.DoesNotExist:
         return JsonResponse({"error": ["movie__not_found"]})
+    except DatabaseError:
+        return JsonResponse({"error": ["internal"]})
 
     data = serializers.serialize("json", movie)
 
