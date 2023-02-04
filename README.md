@@ -12,6 +12,7 @@ python -m venv venv
 source venv/bin/activate (Linux and macOS) or venv\Scripts\activate (Windows)
 pip install -r requirements.txt
 ```
+- Create `.env` file using `.env_sample` 
 - Build docker container for database:
 ```shell
 docker-compose up --build
