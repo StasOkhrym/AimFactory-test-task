@@ -104,7 +104,7 @@ def movie_list_view(request: HttpRequest) -> JsonResponse:
 
         total = movies.count()
 
-        paginator = Paginator(movies, settings.NUM_OF_PAGES)
+        paginator = Paginator(movies, settings.NUM_OF_INSTANCES_ON_PAGE)
 
         try:
             movies_page = paginator.page(page)

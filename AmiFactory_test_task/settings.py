@@ -133,4 +133,4 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Pagination
-NUM_OF_PAGES = 5
+NUM_OF_INSTANCES_ON_PAGE = 5
