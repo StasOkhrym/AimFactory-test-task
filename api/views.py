@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db import DatabaseError
@@ -45,12 +47,9 @@ def retrieve_one_genre_id(genre_ids: str) -> int | None:
     list_of_ids = genre_ids.split(",")
     genre_id = list_of_ids[0]
 
-    if "." in genre_id:
-        return None
+    integer_pattern = re.compile(r"^[0-9]+$")
 
-    try:
-        genre_id = int(genre_id)
-    except ValueError:
+    if not integer_pattern.match(genre_id):
         return None
 
     try:
@@ -58,10 +57,20 @@ def retrieve_one_genre_id(genre_ids: str) -> int | None:
     except Genre.DoesNotExist:
         return None
 
-    return genre_id
+    return int(genre_id)
+
+
+def verify_search_phrase(search_phrase: str) -> bool:
+    search_phrase_pattern = re.compile(r"^[A-Za-z0-9 !?:;,.]{2,20}$")
+
+    if search_phrase_pattern.match(search_phrase):
+        return True
+
+    return False
 
 
 def genre_list_view(request: HttpRequest) -> JsonResponse:
+    """Function based view for retrieving all genre instances"""
     try:
         genres = Genre.objects.all()
         data = get_genres_dicts(genres)
@@ -71,6 +80,10 @@ def genre_list_view(request: HttpRequest) -> JsonResponse:
 
 
 def movie_list_view(request: HttpRequest) -> JsonResponse:
+    """
+    Function based view for retrieving all movie instances with pagination.
+    Filtering by genre_id, src can be applied.
+    """
     genre_id = request.GET.get("genre_id", None)
     search_phrase = request.GET.get("src", None)
     page = request.GET.get("page", 1)
@@ -86,7 +99,7 @@ def movie_list_view(request: HttpRequest) -> JsonResponse:
 
         if search_phrase:
             search_phrase = search_phrase.strip()
-            if not (2 <= len(search_phrase) <= 20):
+            if not verify_search_phrase(search_phrase):
                 return JsonResponse({"error": ["src__invalid"]})
             movies = movies.exclude(title__istartswith=search_phrase)
         total = movies.count()
@@ -113,6 +126,9 @@ def movie_list_view(request: HttpRequest) -> JsonResponse:
 
 
 def movie_detail_view(request: HttpRequest, pk: int) -> JsonResponse:
+    """
+    Function based view for retrieving all details on specific movie instance.
+    """
     try:
         movie = Movie.objects.get(id=pk)
     except Movie.DoesNotExist:
