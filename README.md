@@ -1,4 +1,4 @@
-# AimFactory Test Task
+# AmiFactory Test Task
 ### Small REST API without DRF
 Implementing REST API with JSON-based payload.
 
