@@ -101,6 +101,7 @@ def movie_list_view(request: HttpRequest) -> JsonResponse:
             if not verify_search_phrase(search_phrase):
                 return JsonResponse({"error": ["src__invalid"]})
             movies = movies.exclude(title__istartswith=search_phrase)
+
         total = movies.count()
 
         paginator = Paginator(movies, settings.NUM_OF_PAGES)
