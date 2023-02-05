@@ -98,7 +98,6 @@ def movie_list_view(request: HttpRequest) -> JsonResponse:
             movies = Movie.objects.exclude(genres__id=genre_id)
 
         if search_phrase:
-            search_phrase = search_phrase.strip()
             if not verify_search_phrase(search_phrase):
                 return JsonResponse({"error": ["src__invalid"]})
             movies = movies.exclude(title__istartswith=search_phrase)
