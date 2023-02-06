@@ -1,7 +1,6 @@
-import os
-import uuid as uuid
 from django.db import models
-from django.utils.text import slugify
+
+from api.utils import bg_picture_file_path, poster_file_path
 
 
 class TimeStampModel(models.Model):
@@ -10,7 +9,7 @@ class TimeStampModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
 
 class Genre(TimeStampModel):
@@ -32,20 +31,6 @@ class Person(TimeStampModel):
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name} ({self.types})"
-
-
-def poster_file_path(instance, filename):
-    _, extension = os.path.splitext(filename)
-    filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
-
-    return os.path.join("uploads/movies/posters/", filename)
-
-
-def bg_picture_file_path(instance, filename):
-    _, extension = os.path.splitext(filename)
-    filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
-
-    return os.path.join("uploads/movies/bg_pictures/", filename)
 
 
 class Movie(TimeStampModel):
